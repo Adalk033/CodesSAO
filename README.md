@@ -1,11 +1,15 @@
 # CodesSAO
 /*******************************************************
+
 Cristhian Adal García Hernández
 1 de Febrero de 2018
+
 ********************************************************/
 //Librerias
 #include <stdio.h>
 /****************/
+
+
 struct trabajador 
 {
 	char  nombre[50];
