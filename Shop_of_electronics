@@ -1,0 +1,153 @@
+/****************************************************
+Cristhian García
+******************************************************/
+#include <stdio.h>
+#include <conio.h>
+//--------------------------------------------
+struct articulo
+{
+	int llave;
+	char nombre[41];
+	int categoria;
+	float venta;
+	int exist;
+};
+//--------------------------------------------
+int menu ()
+{
+	int ope=0;
+	printf("\t\tSTEREN SUCURSAL GARCIA\n");
+	printf("\t1)... Alta de un articulo\n");
+	printf("\t2)... Catalogo\n");
+	printf("\t3)... Consulta por CLAVE\n");
+	printf("\t4)... Exigencias por categoria\n");
+	printf("\t0)... Salir\n");
+	printf("\n");
+	printf("\t Que opcion quieres?: ");
+	scanf("%i", &ope);
+	return ope;
+}
+//--------------------------------------------
+void altas( struct articulo cajas[], int lugar)
+{
+	printf("Llave: ");
+	scanf("%i", &cajas[lugar].llave);
+	printf("Nombre: ");
+	fflush( stdin );
+	gets ( cajas[lugar].nombre );
+	printf("Categoria (1.- Audio, 2.-Video, 3.-Cables ): ");
+	scanf("%i", &cajas[lugar].categoria);
+	printf("Venta: ");
+	scanf("%f", &cajas[lugar].venta);
+	printf("Existencia: ");
+	scanf("%i", &cajas[lugar].exist);
+
+}
+//--------------------------------------------
+void mostrar( struct articulo caja)
+{
+	if ( caja.categoria == 1)
+		printf("%4i	   %3i \tAudio %15s		 %4.2f\n", caja.llave, caja.exist, caja.nombre, caja.venta);
+	if ( caja.categoria == 2)	
+		printf("%4i	   %3i \tVideo %15s		 %4.2f\n", caja.llave, caja.exist, caja.nombre, caja.venta);
+	if ( caja.categoria == 3)
+		printf("%4i    %3i \tCables %15s	 %4.2f\n", caja.llave, caja.exist, caja.nombre, caja.venta);
+}
+//--------------------------------------------
+int buscar ( struct articulo caja[], int llaB, int cant )
+{
+	int posi=-1;
+	int ind=0;
+	while ( ((caja[ind]).llave != llaB) && (ind<=cant) )
+		ind++;
+	if (caja[ind].llave==llaB)
+		posi= ind;
+	return posi;
+}
+//--------------------------------------------
+int main ()
+{
+	//Constantes
+	const int MAX=1001;
+
+	//Varibales
+	int opcion = 0,//Para el SWICTH
+		ocupado = -1,//Para controlar lo ya ocupado
+		index=0,//Para los ciclos
+		ipos=0,
+		llave, audio=0, video=0, cables=0; 
+	struct articulo almacen[MAX];
+
+	//Datos de Entrada
+	do 
+	{
+		opcion = menu();
+
+	//Proceso
+			switch (opcion)
+			{
+			case 1:
+				ocupado++;
+				if ( ocupado < MAX)
+					altas( almacen, ocupado);
+				else 
+				{
+					printf("Ya no hay lugar en el Almacen\n");
+					ocupado--;
+				}
+				break;
+
+			case 2:
+				printf("LOS ARTICULOS SON: \n");
+				printf("Llave Existencia Categoria \tNombre   \tVenta\n");
+				for (index=0; index<=ocupado; index++)
+					mostrar(almacen[index]);
+				break;
+
+			case 3:
+				ipos=-1;
+				printf("Llave?: ");
+				scanf("%i", &llave);
+				ipos = buscar(almacen,llave,ocupado);
+				if (ipos==-1)
+					printf("No existe articulo\n");
+				else
+				{
+					printf("Llave Existencia Categoria \tNombre   \tVenta\n");
+					mostrar(almacen[ipos]);
+				}
+				break;
+
+			case 4:
+				audio=0, video=0, cables=0; 
+				printf("Las existencias son: \n");
+				for(index = 0; index < MAX; index++)
+					{
+						if ( (almacen[ index].categoria) == 1)
+							audio++;
+						if ( (almacen[ index].categoria) == 2)
+							video++;
+						if ( (almacen[ index].categoria) == 3)
+							cables++;
+					}
+				printf("\nAUDIO: %i\nVIDEO: %i\nCABLES: %i\n", audio, video, cables);
+				break;
+
+			case 0:
+				break;
+
+			default:
+				printf("Opcion Invalida\n");
+				break;
+
+	//Datos de Salida
+			}
+	}while (opcion != 0);
+
+	//Fin del programa
+	puts("Fin del programa V29");
+
+	//Detener pantalla
+	scanf("%");
+	return 0;
+}
