@@ -1,0 +1,209 @@
+/********************************************************
+CRISTHAIN GARCIA
+********************************************************/
+//Librerias
+#include <stdio.h>
+//---------------------------------------------------------
+const int TAM = 3;
+//----------------------------------------------------------
+//Procedimientos Y/O funciones
+//----------------------------------------------------------
+int menu()
+{
+	int iop = 0;
+
+	printf("\n\t\tSistema de cola circular\n");
+	printf("2... Incializar\n");
+	printf("3... Cola vacia\n");
+	printf("4... Cola llena\n");
+	printf("5... Insercion\n");
+	printf("6... Eliminacion de la cola\n");
+	printf("7... Frente de la cola\n");
+	printf("8... Cantidad de elementos en cola\n");
+	printf("9... Mostrar\n");
+	printf("0... Salir\n");
+	printf("\tOpcion ?: ");
+	scanf("%i", &iop );
+
+	return iop;
+}
+//----------------------------------------------------------
+void incializar( int cola[], int *frente, int *ultimo, int *cantidad )
+{
+	int indice = 0;
+
+	*frente = 0;
+	*ultimo = -1;
+	*cantidad = 0;
+
+	for ( indice = 0; indice < TAM; indice++ )
+	{
+		cola[ indice ] = 0;
+	}
+}
+//-----------------------------------------------------------
+int queueEmpty( int cantidad )
+{
+	return ( cantidad == 0 );
+}
+//-----------------------------------------------------------
+int queueFull ( int cant )
+{
+	return( cant == TAM ) ;
+}
+//-----------------------------------------------------------
+void insercion( int fila[], int *ultimo, int *cantidad, int ikey )
+{
+	// Incrementar cantidad en uno
+	*cantidad = *cantidad + 1;
+	// Obtener la poscion del apuntador ultimo
+	*ultimo = ( *ultimo + 1 ) % TAM;
+	// Poner al dato en la cola
+	fila[ *ultimo] = ikey;
+
+}
+//-----------------------------------------------------------
+void mostrar( int fila[], int primero, int cantidad )
+{
+	int ii = 0;
+	int ik = 0;
+
+	ik = primero;
+
+	for ( ii = 1; ii <= cantidad; ii++ )
+	{
+		ik = ik % TAM;
+		printf("%4i -> ", fila[ ik ] );
+		ik++;
+
+	}//Fin del for
+
+	printf("\n\n");
+}
+//-----------------------------------------------------------
+int contar(int cant)
+{
+	return cant;
+}
+//-----------------------------------------------------------
+int frente( int fila[], int primero)
+{
+	return ( fila[primero] );
+}
+//-----------------------------------------------------------
+int eliminacion( int fila[], int *primero, int *cantidad )
+{
+	int itemLlave;
+	//Tomar al primer elemento de la cola
+	itemLlave = fila[ *primero ] ;
+	//Recorrer al apuntador promero
+	*primero = ( *primero + 1 ) % TAM;
+	//Se decrementa en uno cantidad
+	*cantidad = *cantidad - 1;
+	//regresar el elemento de la cola
+	return itemLlave;
+}
+//-----------------------------------------------------------
+//Inicio del programa
+void main()
+{
+	//Declaracion de variables
+	//Elementos de una cola circular
+	int queue[ TAM ];     //Estructura de la cola
+	int front;            //Apuntador al frente de la cola
+	int rear;             //Apuntador al ultimo de la cola
+	int count;            //Numero de elementos en la cola
+
+	//------------------------
+	int iopcion = 0;
+	int illave  = 0;
+
+
+	//Datos de entrada
+	incializar( queue, &front, &rear, &count );
+
+	do
+	{
+		iopcion = menu();
+
+	//Proceso
+		switch( iopcion )
+		{
+		case 0:
+			break;
+
+		case 2:
+			printf("Incializar\n");
+
+			incializar( queue, &front, &rear, &count );
+
+			break;
+		case 3:
+			if ( queueEmpty( count ) )
+			{
+				printf("La cola esta vacia \n");
+			}
+			else
+			{
+				printf("La cola NO esta vacia!!!!\n");
+			}
+			break;
+		case 4:
+			if ( queueFull( count )  )
+			{
+				printf("La cola esta llena \n");
+			}
+			else
+			{
+				printf("La cola NO esta llena \n");
+			}
+
+			break;
+		case 5:
+			if ( queueFull( count ) )
+			{
+				printf("NO se puede dar de alta en la cola, dado que esta llena !!!\n");
+			}
+			else
+			{
+				printf("Dame el Id del dato a poner en la cola ?: ");
+				scanf("%i", &illave );
+				insercion( queue, &rear, &count, illave );
+				printf("Alta exitosa\n");
+
+			}
+			break;
+		case 6:
+			if ( queueEmpty( count ) )
+			{
+				printf("NO se puede retirar elemento de la cola dado que esta vacia\n");
+			}
+			else
+			{
+				printf("El ID que se retiro de la cola es %4i\n", eliminacion( queue, &front, &count ) );
+
+			}
+			break;
+		case 7:
+			if ( !queueEmpty(count))
+				printf("El ID que esta al frente de la cola es: %4d\n", frente( queue, front));
+			else
+			printf("No hay nadie en la fila, esta vacia\n");
+			break;
+		case 8:
+			printf("La cantidad de elementos en la cola es de : %3d\n", contar(count) );
+			break;
+		case 9:
+			printf("Los elementos que conforman a la cola son: \n");
+			mostrar( queue, front, count );
+			break;
+		}//Fin del switch
+	//Datos de salida
+	}while ( iopcion != 0 );
+	//Fin del programa
+	puts("Fin del programa V 18");
+	//Detener pantalla
+	scanf("%");
+	//No hay return dado que main es void
+
+}//Fin del main
