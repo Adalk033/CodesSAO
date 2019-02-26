@@ -1,0 +1,124 @@
+#include <malloc.h>		//Manejo de memoria dinamica
+#include <stdio.h>		//Input y Output
+#include <stdlib.h>		//Rutinas de utileria
+
+struct nodo
+{
+	int info;			//info - dato a preservar
+	struct nodo *sig;	//sig - Siguiente nodo de informacion
+};
+
+struct nodo *raiz = NULL;
+
+void insert_n( int dato, int lugar)
+{
+	int tres=0;
+	struct nodo *nuevo;
+	struct nodo *ultimo = raiz;
+	tres=0;
+	while( ultimo -> sig != NULL)
+	{
+		ultimo = ultimo -> sig;
+		tres++;
+	}
+
+	if (raiz == NULL)
+	{
+
+		//Lo que hace es convertir la direccion de memoria
+		nuevo = (struct nodo *) malloc( sizeof(struct nodo) );		// Malloc - memory Allocation
+		raiz = nuevo;
+		nuevo -> info = dato;
+		nuevo -> sig = NULL;
+	}
+
+	else if( lugar > tres + 1 )
+	{
+		struct nodo *ultimo = raiz;
+		while(ultimo -> sig != NULL)
+			ultimo = ultimo -> sig;
+		nuevo = (struct nodo *) malloc( sizeof(struct nodo) );
+		nuevo -> info = dato;
+		nuevo -> sig = NULL;
+		ultimo -> sig = nuevo;		
+	}
+	else if (lugar == 1)
+	{
+		nuevo = (struct nodo *) malloc( sizeof(struct nodo) );
+		nuevo -> info = dato;
+		nuevo -> sig = raiz;
+		raiz = nuevo;
+	}
+	else 
+	{
+		int two=0;
+		struct nodo *medio = raiz;
+		while( two < (lugar - 2 ) && medio -> sig != NULL )
+		{
+			medio = medio -> sig;
+			two++;
+		}
+		nuevo = (struct nodo *) malloc( sizeof(struct nodo) );
+		//medio -> sig = ultimo;
+		nuevo -> info = dato;
+		nuevo -> sig = medio ->sig;
+		medio -> sig = nuevo;
+	}
+}
+
+void insert( int dato)
+{
+	struct nodo *nuevo;
+	if (raiz == NULL)
+	{
+
+		//Lo que hace es convertir la direccion de memoria
+		nuevo = (struct nodo *)/*Esto a nuevo se le asigne un espacio */ malloc( sizeof(struct nodo) );		// Malloc - memory Allocation
+		raiz = nuevo;
+		nuevo -> info = dato;
+		nuevo -> sig = NULL;
+	}
+	else
+	{
+		struct nodo *ultimo = raiz;
+		while(ultimo -> sig != NULL)
+			ultimo = ultimo -> sig;
+		nuevo = (struct nodo *) malloc( sizeof(struct nodo) );
+		nuevo -> info = dato;
+		nuevo -> sig = NULL;
+		ultimo -> sig = nuevo;
+	}
+}
+
+int remueve() 
+{
+	struct nodo *elimina=raiz;
+	raiz = raiz->sig;
+	free(elimina);
+}
+
+void imprime()
+{
+	struct nodo *recorre = raiz;
+	while (recorre != NULL)
+	{
+		printf("Dato = %d\n", recorre -> info);
+		recorre = recorre->sig;
+	}
+	printf("\n\n");
+}
+
+int main()
+{
+	insert(1);
+	insert(2);
+	insert(3);
+	insert(4);
+	insert(5);
+	insert_n(6,7);
+	imprime();
+
+
+	system("pause");
+	return 0;
+}
