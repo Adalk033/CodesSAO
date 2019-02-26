@@ -1,0 +1,428 @@
+/*
+METODOS DE ORDENAMIENTO Y SU COMPRATIVA EN TIEMPO
+	@Autor Cristhian Adal Garcia Hernandez
+*/
+
+#include <stdio.h>		//Entrada y salida del programa
+#include <stdlib.h>		//Para usar system() y numeros aleatorios
+#include <time.h>		// Para la hora del sistema
+#include <string.h>     //Para asignar una cadena de texto
+
+#define SIZE 200000
+#define UP 5
+#define RANGO 1000
+
+int cubeta[SIZE][10];
+
+//Funciones de Soporte----------------------------------------------------
+
+void limpiador(int con[], int dim)
+{
+	int index, two;
+	for (index = 0; index < SIZE; index++)
+	{
+		for (two = 0; two < 10; two++)
+			cubeta[index][two] = -1;
+	}
+	for (index = 0; index < 10; index++)
+		con[index] = 0;
+}
+
+void devolverCubeta(int arr[], int dim)
+{
+	int index, two, tres;
+
+	tres = 0;
+	for (index = 0; index < 10; index++)
+	{
+		for (two = 0; two < dim && cubeta[two][index] != -1; two++)
+		{
+			arr[tres] = cubeta[two][index];
+			tres++;
+		}
+	}
+}
+
+int forSort(int arr[], int total, int conta, int one)
+{
+	int two;
+	for (two = conta; two < (conta + total); two++)
+		arr[two] = one;
+	//imprimeArreglo(arr, SIZE);
+	return two;
+}
+
+void imprimeArreglo(int arr[], int dim)
+{
+	int index;
+	for (index = 0; index < SIZE; index++)
+		printf("%d, ", arr[index]);
+	printf("\n");
+}
+
+int particion(int arr[], int linf, int lsup)
+{
+	int pivote, abajo, arriba, temporal; 
+
+	pivote = arr[linf];
+	arriba = lsup;
+	abajo = linf;
+	while (abajo < arriba)
+	{
+		while (arr[abajo] <= pivote && abajo < lsup)
+			abajo = abajo + 1;
+		while (arr[arriba] > pivote)
+			arriba = arriba - 1;
+		if (abajo < arriba)
+		{
+			temporal = arr[abajo];
+			arr[abajo] = arr[arriba];
+			arr[arriba] = temporal;
+		}
+	}
+	arr[linf] = arr[arriba];
+	arr[arriba] = pivote;
+	return arriba;
+}
+
+//Funciones de Ordenamiento------------------------------------------------
+
+//ORDENAMIENTO TIPO BURBUJA
+void burbuja(int arr[], int dim)
+{
+	int index, two, numTem;
+
+	//Algoritmo
+	for (index = 0; index < dim - 1; index++)
+	{
+		for (two = index + 1; two < dim; two++)
+		{
+			if (arr[index] > arr[two])
+			{
+				numTem = arr[index];
+				arr[index] = arr[two];
+				arr[two] = numTem;
+			}
+		}
+	}
+
+	//imprimeArreglo(arr,dim);
+}
+
+//ORDENAMIENTO DE SELECCION
+void selectionSort(int arr[], int dim)
+{
+	int index, two, min, temp;
+
+	for (index = 0; index < (dim - 1); index++)
+	{
+		min = index;
+
+		for (two = index + 1; two < dim; two++)
+		{
+			//Buscar el minimo en todo el arreglo
+			if (arr[two] < arr[min])
+				min = two;
+		}
+		if ( min != index)
+		{
+			temp = arr[index];
+			arr[index] = arr[min];
+			arr[min] = temp;
+		}
+	}
+
+	//imprimeArreglo(arr,dim);
+}
+
+//ORDENAMIENTO DE INSERCION
+void insertSort(int arr[], int dim)
+{
+	int index, two, min;
+	for (index = 1; index < dim; index++)
+	{
+		min = arr[index];
+		two = index - 1;
+		while (two >= 0 && arr[two] > min)
+		{
+			arr[two + 1] = arr[two];
+			two = two - 1;
+		}
+		arr[two + 1] = min;
+	}
+	//imprimeArreglo(arr,dim);
+}
+
+//ORDENAMIENTO DE SHELL
+void shellSort(int arr[], int dim, int in[], int numic)
+{
+	int index, two, span = 0, cont = 0, tres = 0;
+
+	for (index = 0; index < numic; index++)
+	{
+		span = in[index];
+		for (two = span; two < SIZE; two++)
+		{
+			tres = arr[two];
+			cont = two - span;
+			while (cont >= 0 && tres < arr[cont])
+			{
+				arr[cont + span] = arr[cont];
+				cont -= span;
+			}
+			arr[cont + span] = tres;
+		}
+	}
+	//imprimeArreglo(arr, dim);
+}
+
+//ODENAMIENTO Bucket Sort
+void bucketSort(int arr[], int dim)
+{
+	int index, two, con[10];
+	int temporal, posi;
+
+	limpiador(con, dim);
+
+	for (index = 0; index < dim; index++)
+	{
+		temporal = arr[index];
+		posi = temporal % 10;
+		cubeta[con[posi]][posi] = temporal;
+		con[posi]++;
+	}
+
+	devolverCubeta(arr, dim);
+
+	limpiador(con, dim);
+
+	for (index = 0; index < dim; index++)
+	{
+		temporal = arr[index];
+		posi = (temporal % 100 - temporal % 10) / 10;
+		cubeta[con[posi]][posi] = temporal;
+		con[posi]++;
+	}
+
+	devolverCubeta(arr, dim);
+
+	limpiador(con, dim);
+
+	for (index = 0; index < dim; index++)
+	{
+		temporal = arr[index];
+		posi = (temporal - temporal % 100) / 100;
+		cubeta[con[posi]][posi] = temporal;
+		con[posi]++;
+	}
+
+	devolverCubeta(arr, dim);
+
+	limpiador(con, dim);
+
+	//imprimeArreglo(arr, SIZE);
+}
+
+//Ordenamiento de Distribucion
+void disSort(int arr[], int dim)
+{
+	int index, con0 = 0, con1 = 0, con2 = 0, con3 = 0, con4 = 0, con5 = 0;
+	int x = 0, y, con6 = 0, con7 = 0, con8 = 0, con9 = 0, con10 = 0;
+	for (index = 0; index < dim; index++)
+	{
+		if (arr[index] == 0)
+			con0++;
+		if (arr[index] == 1)
+			con1++;
+		if (arr[index] == 2)
+			con2++;
+		if (arr[index] == 3)
+			con3++;
+		if (arr[index] == 4)
+			con4++;
+		if (arr[index] == 6)
+			con6++;
+		if (arr[index] == 7)
+			con7++;
+		if (arr[index] == 8)
+			con8++;
+		if (arr[index] == 9)
+			con9++;
+		if (arr[index] == 10)
+			con10++;
+
+	}
+	x = 0;
+	y = 0;
+	x = forSort(arr, con0, x, y);
+	y++;
+	x = forSort(arr, con1, x, y);
+	y++;
+	x = forSort(arr, con2, x, y);
+	y++;
+	x = forSort(arr, con3, x, y);
+	y++;
+	x = forSort(arr, con4, x, y);
+	y++;
+	x = forSort(arr, con5, x, y);
+	y++;
+	x = forSort(arr, con6, x, y);
+	y++;
+	x = forSort(arr, con7, x, y);
+	y++;
+	x = forSort(arr, con8, x, y);
+	y++;
+	x = forSort(arr, con9, x, y);
+	y++;
+	x = forSort(arr, con10, x, y);
+
+	//imprimeArreglo(arr, dim);
+}
+
+//Ordenamiento de Quick Sort
+void quickSort(int arr[], int lim_inf, int lsup)
+{
+	int piv;
+	if (lim_inf >= lsup)
+		return;
+	piv = particion(arr, lim_inf, lsup);
+	quickSort(arr, lim_inf, piv-1);
+	quickSort(arr, piv + 1, lsup);
+}
+
+//--------------------------------------------------------------------------
+
+int main()
+{
+	int arreglo[SIZE], index, incre[UP], cont;
+	int inicio, fin, total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
+	int total6 = 0;
+
+	srand(17);
+	cont = 5;
+	for (index = 0; index < 5; index++)
+	{
+		incre[index] = cont;
+		cont--;
+	}
+	
+	printf("\nEl total de numeros en la prueba de ordenamientos es de: %d\n\n", SIZE);
+	printf("La prueba dura alrededor de 2:50 minutos, se ira imprimiendo tiempo por tiempo y al final la tabla de ranking: \n");
+	printf("Si en algun momento de la prueba llega a tardar mas de lo esperado de ENTER en la consola de Windows\n");
+	
+	printf("\n");
+
+	//ORDENAMIENTOS
+	
+	//Bubble Sort
+	for (index = 0; index < SIZE; index++)
+		arreglo[index] = rand() % RANGO;
+	inicio = time(0);//Iniciar Cronometro en 0
+	burbuja(arreglo, SIZE);
+	fin = time(0);
+	total1 = fin - inicio;
+	printf("\nTiempo de Bubble Sort es: %d segundos\n", total1);
+	
+	//Quick Sort
+	for (index = 0; index < SIZE; index++)
+		arreglo[index] = rand() % RANGO;
+	inicio = time(0);
+	quickSort(arreglo, 0, SIZE - 1);
+	fin = time(0);
+	total6 = fin - inicio;
+	printf("\nTiempo de Quick Sort es: %d segundos\n", total6);
+
+	//Selection Sort
+	for (index = 0; index < SIZE; index++)
+		arreglo[index] = rand() % RANGO;
+	inicio = time(0);
+	selectionSort(arreglo, SIZE);
+	fin = time(0);
+	total2 = fin - inicio;
+	printf("\nTiempo de Selection Sort es: %d segundos\n", total2);
+	
+	//Shell Sort
+	for (index = 0; index < SIZE; index++)
+		arreglo[index] = rand() % RANGO;
+	inicio = time(0);
+	shellSort(arreglo, SIZE, incre, UP);
+	fin = time(0);
+	total4 = fin - inicio;
+	printf("\nTiempo de Shell Sort es: %d segundos\n", total4);
+
+	//Insert Sort
+	for (index = 0; index < SIZE; index++)
+		arreglo[index] = rand() % RANGO;
+	inicio = time(0);
+	insertSort(arreglo, SIZE);
+	fin = time(0);
+	total3 = fin - inicio;
+	printf("\nTiempo de Insert Sort es: %d segundos\n", total3);
+
+	//Bucket Sort
+	for (index = 0; index < SIZE; index++)
+		arreglo[index] = rand() % RANGO;
+	inicio = time(0);
+	bucketSort(arreglo, SIZE);
+	fin = time(0);
+	total5 = fin - inicio;
+	printf("\nTiempo de Bucket Sort es: %d segundos\n", total5);
+
+	/*Distribution Sort
+	for (index = 0; index < SIZE; index++)
+		arreglo[index] = rand() % RANGO;
+	inicio = time(0);
+	disSort(arreglo, SIZE);
+	fin = time(0);
+	total6 = fin - inicio;*/
+
+	
+	char cuarto[30], quinto[30], primero[30], segundo[30];
+	int temporal1, temporal2, tempf, temps;
+
+	if (total5 < total6)
+	{
+		strcpy(primero, "Bucket Sort");
+		tempf = total5;
+		strcpy(segundo, "Quick Sort");
+		temps = total6;
+	}
+	else
+	{
+		strcpy(primero, "Quick Sort");
+		tempf = total6;
+		strcpy(segundo, "Bucket Sort");
+		temps = total5;
+	}
+
+	if (total1 > total2)
+	{
+		strcpy(cuarto, "Selection Sort");
+		temporal1 = total2;
+		strcpy(quinto,"Bubble Sort");
+		temporal2 = total1;
+	}
+	else
+	{
+		strcpy(cuarto,"Bubble Sort");
+		temporal1 = total1;
+		strcpy(quinto,"Selection Sort");
+		temporal2 = total2;
+	}
+
+	printf("\t---------------------------------------------------\n");
+	printf("\t|Nombre del ordenamiento | Tiempo hecho | Posicion |\n\t---------------------------------------------------");
+	printf("\n\t|\t%s       |  %6d      |    1ro   |\n\t---------------------------------------------------", primero, tempf);
+	printf("\n\t|\t%s      |  %6d      |    2do   |\n\t---------------------------------------------------", segundo, temps);
+	printf("\n\t|\tShell Sort       |  %6d      |    3ro   |\n\t---------------------------------------------------", total4);
+	printf("\n\t|\tInsert Sort      |  %6d      |    4to   |\n\t---------------------------------------------------", total3);
+	printf("\n\t|\t%s   |  %6d      |    5to   |\n\t---------------------------------------------------", cuarto, temporal1);
+	printf("\n\t|\t%s      |  %6d      |    6to   |\n\t---------------------------------------------------", quinto,temporal2);
+
+	printf("\nEl tiempo total del programa fue: %d segundos\n", total1 + total2 + total3 + total4 + total5 + total6);
+	
+
+	printf("\n\n");
+	system("pause");
+	return 0;
+}
